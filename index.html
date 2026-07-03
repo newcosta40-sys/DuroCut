@@ -1,0 +1,1623 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DuroCut | Calculadora e Assistente de Metal Duro</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-logo">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5 12 2"></polygon>
+                        <line x1="12" y1="22" x2="12" y2="15.5"></line>
+                        <polyline points="22 8.5 12 15.5 2 8.5"></polyline>
+                        <polyline points="2 15.5 12 8.5 22 15.5"></polyline>
+                        <line x1="12" y1="2" x2="12" y2="8.5"></line>
+                    </svg>
+                </div>
+                <div class="logo-text">
+                    <h1>Duro<span>Cut</span></h1>
+                    <p>Metal Duro & Dados de Corte</p>
+                </div>
+            </div>
+            
+            <nav class="app-tabs">
+    <button class="tab-btn active" data-tab="dados-corte" onclick="abrirAba('dados-corte')">
+        <i data-lucide="calculator"></i>
+        <span>Dados de Corte</span>
+    </button>
+
+    <button class="tab-btn" data-tab="tco-custos" onclick="abrirAba('tco-custos')">
+        <i data-lucide="line-chart"></i>
+        <span>Estudo de Custos (TCO)</span>
+    </button>
+
+    <button class="tab-btn" data-tab="seletor-iso" onclick="abrirAba('seletor-iso')">
+        <i data-lucide="sliders"></i>
+        <span>Seleção de Ferramentas</span>
+    </button>
+
+    <button class="tab-btn" data-tab="orcamentos" onclick="abrirAba('orcamentos')">
+        <i data-lucide="file-text"></i>
+        <span>Gerar Proposta</span>
+    </button>
+
+    <button class="tab-btn" data-tab="fabricacao" onclick="abrirAba('fabricacao')">
+        <i data-lucide="factory"></i>
+        <span>Fabricação de Ferramentas</span>
+    </button>
+
+    <button class="tab-btn" data-tab="troubleshooting" onclick="abrirAba('troubleshooting')">
+        <i data-lucide="wrench"></i>
+        <span>Solução de Problemas</span>
+    </button>
+</nav>
+                
+        </header>
+
+        <!-- Main Content -->
+        <main class="app-main">
+            <!-- TAB 1: DADOS DE CORTE -->
+            <section id="dados-corte" class="tab-content active">
+                <div class="section-header">
+                    <h2>Calculadora de Dados de Corte</h2>
+                    <p>Calcule parâmetros exatos para operações de usinagem.</p>
+                </div>
+
+                <div class="operation-selector">
+                    <button class="op-btn active" data-op="torneamento">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none">
+                            <rect x="2" y="9" width="6" height="6" rx="1"></rect>
+                            <line x1="8" y1="12" x2="22" y2="12"></line>
+                            <line x1="14" y1="8" x2="14" y2="16"></line>
+                        </svg>
+                        Torneamento
+                    </button>
+                    <button class="op-btn" data-op="fresamento">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none">
+                            <circle cx="12" cy="12" r="9"></circle>
+                            <circle cx="12" cy="12" r="3"></circle>
+                            <line x1="12" y1="3" x2="12" y2="9"></line>
+                            <line x1="12" y1="15" x2="12" y2="21"></line>
+                            <line x1="3" y1="12" x2="9" y2="12"></line>
+                            <line x1="15" y1="12" x2="21" y2="12"></line>
+                        </svg>
+                        Fresamento
+                    </button>
+                    <button class="op-btn" data-op="furacao">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none">
+                            <path d="M12 2L12 22"></path>
+                            <path d="M8 8L16 12L8 16"></path>
+                            <path d="M8 14L16 18"></path>
+                            <path d="M8 4L16 8"></path>
+                        </svg>
+                        Furação
+                    </button>
+                </div>
+
+                <div class="calculator-grid">
+                    <!-- Painel de Inputs -->
+                    <div class="glass-card input-panel">
+                        <h3>Variáveis de Entrada</h3>
+                        <form id="calc-form">
+                            <!-- Workpiece Material Selector -->
+                            <div class="input-group">
+                                <label for="material-select">Material da Peça (ISO)</label>
+                                <select id="material-select">
+                                    <option value="p-aco" data-kc="1900" data-vc="220">ISO P - Aço Carbono / Liga (~1900 N/mm²)</option>
+                                    <option value="m-inox" data-kc="2200" data-vc="160">ISO M - Aço Inoxidável (~2200 N/mm²)</option>
+                                    <option value="k-fofo" data-kc="1200" data-vc="200">ISO K - Ferro Fundido (~1200 N/mm²)</option>
+                                    <option value="n-al" data-kc="700" data-vc="600">ISO N - Alumínio / Não-Ferrosos (~700 N/mm²)</option>
+                                    <option value="s-super" data-kc="2800" data-vc="50">ISO S - Superligas / Titânio (~2800 N/mm²)</option>
+                                    <option value="h-duro" data-kc="3500" data-vc="80">ISO H - Materiais Endurecidos (~3500 N/mm²)</option>
+                                </select>
+                            </div>
+
+                            <!-- Inputs Dinâmicos com base na operação -->
+                            <div id="dynamic-inputs">
+                                <!-- Inputs Torneamento por Padrão -->
+                                <div class="form-row">
+                                    <div class="input-group half">
+                                        <label for="input-diameter">Diâmetro da Peça (D<sub>m</sub>)</label>
+                                        <div class="input-with-unit">
+                                            <input type="number" id="input-diameter" value="80" min="0.1" step="any">
+                                            <span class="unit">mm</span>
+                                        </div>
+                                    </div>
+                                    <div class="input-group half">
+                                        <label for="input-vc">Velocidade de Corte (V<sub>c</sub>)</label>
+                                        <div class="input-with-unit">
+                                            <input type="number" id="input-vc" value="220" min="1" step="any">
+                                            <span class="unit">m/min</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="input-group half">
+                                        <label for="input-ap">Prof. de Corte (a<sub>p</sub>)</label>
+                                        <div class="input-with-unit">
+                                            <input type="number" id="input-ap" value="2.0" min="0.05" step="any">
+                                            <span class="unit">mm</span>
+                                        </div>
+                                    </div>
+                                    <div class="input-group half">
+                                        <label for="input-feed">Avanço (f<sub>n</sub>)</label>
+                                        <div class="input-with-unit">
+                                            <input type="number" id="input-feed" value="0.25" min="0.01" step="any">
+                                            <span class="unit">mm/v</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="input-group">
+                                        <label for="input-radius">Raio do Inserto (r<sub>ε</sub>)</label>
+                                        <select id="input-radius">
+                                            <option value="0.2">0.2 mm</option>
+                                            <option value="0.4">0.4 mm</option>
+                                            <option value="0.8" selected>0.8 mm</option>
+                                            <option value="1.2">1.2 mm</option>
+                                            <option value="1.6">1.6 mm</option>
+                                            <option value="2.4">2.4 mm</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="input-group half">
+                                    <label for="input-kc">Força Espec. de Corte (k<sub>c</sub>)</label>
+                                    <div class="input-with-unit">
+                                        <input type="number" id="input-kc" value="1900">
+                                        <span class="unit">N/mm²</span>
+                                    </div>
+                                </div>
+                                <div class="input-group half">
+                                    <label for="input-eta">Rendimento da Máq. (η)</label>
+                                    <div class="input-with-unit">
+                                        <input type="number" id="input-eta" value="0.85" min="0.1" max="1" step="0.05">
+                                        <span class="unit">nº</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="input-group">
+                                    <label for="input-mach-power">Potência Disp. da Máquina (kW)</label>
+                                    <div class="input-with-unit">
+                                        <input type="number" id="input-mach-power" value="15.0" min="0.5" step="0.5">
+                                        <span class="unit">kW</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Painel de Resultados -->
+                    <div class="glass-card output-panel">
+                        <h3>Resultados Calculados</h3>
+                        <div class="results-grid">
+                    
+                            <div class="result-card highlight">
+                                <span class="result-label">Rotação do Spindle (n)</span>
+                                <span class="result-value" id="res-n">875</span>
+                                <span class="result-unit">RPM</span>
+                            </div>
+                            <div class="result-card highlight">
+                                <span class="result-label">Velocidade de Avanço (V<sub>f</sub>)</span>
+                                <span class="result-value" id="res-vf">219</span>
+                                <span class="result-unit">mm/min</span>
+                            </div>
+                            <div class="result-card">
+                                <span class="result-label">Taxa de Remoção (Q)</span>
+                                <span class="result-value" id="res-q">110</span>
+                                <span class="result-unit">cm³/min</span>
+                            </div>
+                            <div class="result-card">
+                                <span class="result-label">Potência de Corte (P<sub>c</sub>)</span>
+                                <span class="result-value" id="res-pc">4.1</span>
+                                <span class="result-unit">kW</span>
+                            </div>
+                            <div class="result-card">
+                                <span class="result-label">Torque Estimado (M<sub>c</sub>)</span>
+                                <span class="result-value" id="res-mc">44.7</span>
+                                <span class="result-unit">Nm</span>
+                            </div>
+                            <div id="ld-advisor" class="glass-card" style="margin-top:20px; display:none;">
+    <h3>Recomendação Inteligente de Ferramenta</h3>
+    <p id="ld-advisor-text"></p>
+</div>
+                            <!-- Linha de Rugosidade (exclusiva torneamento) -->
+                            <div class="result-card full-width" id="roughness-card">
+                                <span class="result-label">Rugosidade Teórica (Est. f<sub>n</sub> e r<sub>ε</sub>)</span>
+                                <div class="roughness-flex">
+                                    <div>
+                                        <span class="sub-label">Ra (Aritmética):</span>
+                                        <strong id="res-ra">2.44</strong> <span class="result-unit">µm</span>
+                                    </div>
+                                    <div>
+                                        <span class="sub-label">Rt/Rz (Pico-Val):</span>
+                                        <strong id="res-rt">9.77</strong> <span class="result-unit">µm</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Painel de Viabilidade & Limites da Máquina -->
+                        <div class="glass-card" style="margin-top: 1.5rem; padding: 1.25rem; background: rgba(0,0,0,0.15); border-color: rgba(255,255,255,0.05); margin-bottom: 0;">
+                            <h4 style="font-family: var(--font-heading); margin-top: 0; margin-bottom: 0.75rem; font-size: 0.95rem; color: var(--primary-light); display: flex; align-items: center; gap: 0.5rem;">
+                                <i data-lucide="gauge" style="width: 16px; height: 16px;"></i>
+                                Viabilidade & Limites da Máquina
+                            </h4>
+                            
+                            <div style="display: flex; flex-direction: column; gap: 0.85rem;">
+                                <!-- Barra de Carga de Potência -->
+                                <div>
+                                    <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 0.25rem;">
+                                        <span style="color: var(--text-muted);">Carga do Motor (Spindle):</span>
+                                        <strong id="viab-carga-texto">0.0% (0.0 kW / 15.0 kW)</strong>
+                                    </div>
+                                    <div style="width: 100%; height: 8px; background: rgba(255,255,255,0.05); border-radius: 4px; overflow: hidden; position: relative;">
+                                        <div id="viab-carga-barra" style="width: 0%; height: 100%; background: linear-gradient(90deg, #10b981, #3b82f6); transition: width 0.3s ease;"></div>
+                                    </div>
+                                </div>
+
+                                <!-- Indicadores Laterais (Estabilidade e Acabamento) -->
+                                <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 0.25rem;">
+                                    <!-- Estabilidade -->
+                                    <div class="glass-card" style="flex: 1; min-width: 140px; padding: 0.75rem; display: flex; align-items: center; gap: 0.5rem; background: rgba(0,0,0,0.1); border-color: rgba(255,255,255,0.02); margin: 0;">
+                                        <span id="viab-estabilidade-led" style="width: 10px; height: 10px; background: #10b981; border-radius: 50%; box-shadow: 0 0 8px #10b981;"></span>
+                                        <div style="display: flex; flex-direction: column; line-height: 1.2;">
+                                            <span style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase;">Estabilidade</span>
+                                            <strong id="viab-estabilidade-texto" style="font-size: 0.75rem;">Usinagem Estável</strong>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Acabamento -->
+                                    <div class="glass-card" style="flex: 1; min-width: 140px; padding: 0.75rem; display: flex; align-items: center; gap: 0.5rem; background: rgba(0,0,0,0.1); border-color: rgba(255,255,255,0.02); margin: 0;">
+                                        <i data-lucide="sparkles" id="viab-acabamento-icon" style="width: 16px; height: 16px; color: #60a5fa;"></i>
+                                        <div style="display: flex; flex-direction: column; line-height: 1.2;">
+                                            <span style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase;">Acabamento</span>
+                                            <strong id="viab-acabamento-texto" style="font-size: 0.75rem;">Semi-Acabamento</strong>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 2: ESTUDO DE CUSTOS (TCO) -->
+            <section id="tco-custos" class="tab-content">
+                <div class="section-header">
+                    <h2>Estudo de Custos & Economia (TCO)</h2>
+                    <p>Demonstre o valor financeiro da sua ferramenta mostrando a economia real por peça e anual.</p>
+                </div>
+
+                <div class="tco-wrapper">
+                    <div class="tco-inputs-grid">
+                        <!-- Comum -->
+                        <div class="glass-card tco-common-card">
+                            <h3>Parâmetros de Operação & Lote</h3>
+                            <div class="form-row">
+                                <div class="input-group half">
+                                    <label for="tco-mach-cost">Custo de Hora Máquina</label>
+                                    <div class="input-with-unit">
+                                        <span class="prefix">R$</span>
+                                        <input type="number" id="tco-mach-cost" value="150" min="0" step="any">
+                                        <span class="unit">/ h</span>
+                                    </div>
+                                </div>
+                                <div class="input-group half">
+                                    <label for="tco-annual-volume">Volume Anual de Peças</label>
+                                    <div class="input-with-unit">
+                                        <input type="number" id="tco-annual-volume" value="10000" min="1">
+                                        <span class="unit">peças</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="comparison-cols">
+                            <!-- Ferramenta Atual -->
+                            <div class="glass-card current-tool-card">
+                                <div class="card-badge badge-current">Processo Atual (Concorrente)</div>
+                                <h3>Ferramenta Atual</h3>
+                                
+                                <div class="input-group">
+                                    <label for="tco-curr-insert-price">Preço da Pastilha / Broca</label>
+                                    <div class="input-with-unit">
+                                        <span class="prefix">R$</span>
+                                        <input type="number" id="tco-curr-insert-price" value="45.00" min="0" step="any">
+                                    </div>
+                                </div>
+                                
+                                <div class="form-row">
+                                    <div class="input-group half">
+                                        <label for="tco-curr-edges">Arestas / Pastilha</label>
+                                        <input type="number" id="tco-curr-edges" value="4" min="1">
+                                    </div>
+                                    <div class="input-group half">
+                                        <label for="tco-curr-tool-life">Peças por Aresta</label>
+                                        <input type="number" id="tco-curr-tool-life" value="30" min="1">
+                                    </div>
+                                </div>
+
+                                <div class="input-group">
+                                    <label for="tco-curr-cycle-time">Tempo de Ciclo por Peça</label>
+                                    <div class="input-with-unit">
+                                        <input type="number" id="tco-curr-cycle-time" value="180" min="1">
+                                        <span class="unit">segundos</span>
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="input-group half">
+                                        <label for="tco-curr-holder-price">Preço Suporte (Amortiz.)</label>
+                                        <div class="input-with-unit">
+                                            <span class="prefix">R$</span>
+                                            <input type="number" id="tco-curr-holder-price" value="450.00" min="0" step="any">
+                                        </div>
+                                    </div>
+                                    <div class="input-group half">
+                                        <label for="tco-curr-holder-life">Vida Útil Suporte (peças)</label>
+                                        <input type="number" id="tco-curr-holder-life" value="2000" min="1">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Ferramenta Proposta -->
+                            <div class="glass-card proposed-tool-card">
+                                <div class="card-badge badge-proposed">Processo DuroCut (Proposto)</div>
+                                <h3>Ferramenta Proposta</h3>
+                                
+                                <div class="input-group">
+                                    <label for="tco-prop-insert-price">Preço da Pastilha / Broca</label>
+                                    <div class="input-with-unit">
+                                        <span class="prefix">R$</span>
+                                        <input type="number" id="tco-prop-insert-price" value="55.00" min="0" step="any">
+                                    </div>
+                                </div>
+                                
+                                <div class="form-row">
+                                    <div class="input-group half">
+                                        <label for="tco-prop-edges">Arestas / Pastilha</label>
+                                        <input type="number" id="tco-prop-edges" value="4" min="1">
+                                    </div>
+                                    <div class="input-group half">
+                                        <label for="tco-prop-tool-life">Peças por Aresta</label>
+                                        <input type="number" id="tco-prop-tool-life" value="45" min="1">
+                                    </div>
+                                </div>
+
+                                <div class="input-group">
+                                    <label for="tco-prop-cycle-time">Tempo de Ciclo por Peça</label>
+                                    <div class="input-with-unit">
+                                        <input type="number" id="tco-prop-cycle-time" value="120" min="1">
+                                        <span class="unit">segundos</span>
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="input-group half">
+                                        <label for="tco-prop-holder-price">Preço Suporte (Amortiz.)</label>
+                                        <div class="input-with-unit">
+                                            <span class="prefix">R$</span>
+                                            <input type="number" id="tco-prop-holder-price" value="500.00" min="0" step="any">
+                                        </div>
+                                    </div>
+                                    <div class="input-group half">
+                                        <label for="tco-prop-holder-life">Vida Útil Suporte (peças)</label>
+                                        <input type="number" id="tco-prop-holder-life" value="2000" min="1">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Relatório Financeiro e Resultados TCO -->
+                    <div class="tco-results-panel">
+                        <!-- Card de Economia de Destaque -->
+                        <div class="glass-card savings-glow-card">
+                            <div class="savings-header">
+                                <i data-lucide="sparkles"></i>
+                                <span>ECONOMIA ANUAL ESTIMADA</span>
+                            </div>
+                            <div class="savings-amount" id="tco-annual-savings">R$ 0,00</div>
+                            <div class="savings-sub" id="tco-savings-percent">Redução de 0.0% no custo total</div>
+                            <div class="savings-meta">
+                                <div><i data-lucide="clock"></i> <span id="tco-hours-saved">0</span> horas economizadas/ano</div>
+                                <div><i data-lucide="trending-up"></i> +<span id="tco-prod-increase">0.0</span>% em produtividade</div>
+                            </div>
+                        </div>
+
+                        <!-- Detalhamento Lado a Lado -->
+                        <div class="glass-card detailed-table-card">
+                            <h3>Comparativo Detalhado de Custos</h3>
+                            <div class="table-container">
+                                <table class="tco-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Componente de Custo</th>
+                                            <th>Atual (Peça)</th>
+                                            <th>Proposto (Peça)</th>
+                                            <th>Economia (Peça)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Custo do Inserto (Consumo)</td>
+                                            <td id="tco-curr-cost-insert">R$ 0,38</td>
+                                            <td id="tco-prop-cost-insert">R$ 0,31</td>
+                                            <td id="tco-diff-cost-insert" class="diff-value">R$ 0,07</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Custo de Amortização Suporte</td>
+                                            <td id="tco-curr-cost-holder">R$ 0,23</td>
+                                            <td id="tco-prop-cost-holder">R$ 0,25</td>
+                                            <td id="tco-diff-cost-holder" class="diff-value positive">-R$ 0,02</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Custo de Tempo de Máquina</td>
+                                            <td id="tco-curr-cost-mach">R$ 7,50</td>
+                                            <td id="tco-prop-cost-mach">R$ 5,00</td>
+                                            <td id="tco-diff-cost-mach" class="diff-value">R$ 2,50</td>
+                                        </tr>
+                                        <tr class="total-row">
+                                            <td>CUSTO TOTAL POR PEÇA</td>
+                                            <td id="tco-curr-total-part">R$ 8,11</td>
+                                            <td id="tco-prop-total-part">R$ 5,56</td>
+                                            <td id="tco-diff-total-part" class="diff-value-total">R$ 2,55</td>
+                                        </tr>
+                                        <tr class="total-row annual-row">
+                                            <td>CUSTO ANUAL TOTAL</td>
+                                            <td id="tco-curr-total-annual">R$ 81.100</td>
+                                            <td id="tco-prop-total-annual">R$ 55.600</td>
+                                            <td id="tco-diff-total-annual" class="diff-value-total">R$ 25.500</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <!-- Visual Chart using simple CSS bars -->
+                            <div class="chart-section">
+                                <h4>Distribuição de Custos por Peça</h4>
+                                <div class="chart-container">
+                                    <div class="chart-row">
+                                        <div class="chart-label">Atual</div>
+                                        <div class="chart-bar-wrapper">
+                                            <div class="chart-bar bar-insert" id="bar-curr-insert" style="width: 5%"></div>
+                                            <div class="chart-bar bar-holder" id="bar-curr-holder" style="width: 3%"></div>
+                                            <div class="chart-bar bar-machine" id="bar-curr-machine" style="width: 92%"></div>
+                                            <span class="bar-total-label" id="bar-curr-label">R$ 8,11</span>
+                                        </div>
+                                    </div>
+                                    <div class="chart-row">
+                                        <div class="chart-label">Proposto</div>
+                                        <div class="chart-bar-wrapper">
+                                            <div class="chart-bar bar-insert" id="bar-prop-insert" style="width: 6%"></div>
+                                            <div class="chart-bar bar-holder" id="bar-prop-holder" style="width: 4%"></div>
+                                            <div class="chart-bar bar-machine" id="bar-prop-machine" style="width: 90%"></div>
+                                            <span class="bar-total-label" id="bar-prop-label">R$ 5,56</span>
+                                        </div>
+                                    </div>
+                                    <div class="chart-legend">
+                                        <span class="legend-item"><span class="legend-color color-insert"></span> Inserto</span>
+                                        <span class="legend-item"><span class="legend-color color-holder"></span> Suporte</span>
+                                        <span class="legend-item"><span class="legend-color color-machine"></span> Tempo Máquina</span>
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 3: SELETOR DE CLASSE / ISO (SELEÇÃO DE FERRAMENTAS) -->
+            <section id="seletor-iso" class="tab-content">
+                <div class="section-header">
+                    <h2>Seleção Inteligente de Ferramentas</h2>
+                    <p>Fluxo guiado para recomendação automática baseada na peça, operação, máquina e condições de corte.</p>
+                </div>
+
+                <div class="iso-selector-layout">
+                    <!-- Wizard steps -->
+                    <div class="glass-card wizard-card full-width">
+                        <div class="wizard-steps-indicator">
+                            <div class="step-indicator active" id="step-indicator-1">1. Material</div>
+                            <div class="step-indicator" id="step-indicator-2">2. Operação</div>
+                            <div class="step-indicator" id="step-indicator-3">3. Máquina</div>
+                            <div class="step-indicator" id="step-indicator-4">4. Condições</div>
+                            <div class="step-indicator" id="step-indicator-5">5. Recomendação</div>
+                        </div>
+
+                        <!-- Passo 1: Material -->
+                        <div class="wizard-step" id="wizard-step-1">
+                            <h3>Qual o material da peça a ser usinada?</h3>
+                            <p class="step-subtitle">A classe de metal duro e a velocidade de corte dependem diretamente da liga e dureza do material.</p>
+                            
+                            <div class="material-grid-interactive">
+                                <div class="material-option iso-p-card" data-iso="P">
+                                    <div class="iso-letter-badge">P</div>
+                                    <h4>Aço Carbono / Liga</h4>
+                                    <p>Aço doce, ligas estruturais, aços ferramenta não tratados.</p>
+                                </div>
+                                <div class="material-option iso-m-card" data-iso="M">
+                                    <div class="iso-letter-badge">M</div>
+                                    <h4>Aço Inoxidável</h4>
+                                    <p>Austenítico, duplex, ferrítico, martensítico.</p>
+                                </div>
+                                <div class="material-option iso-k-card" data-iso="K">
+                                    <div class="iso-letter-badge">K</div>
+                                    <h4>Ferro Fundido</h4>
+                                    <p>Cinzento, nodular (GGG), maleável.</p>
+                                </div>
+                                <div class="material-option iso-n-card" data-iso="N">
+                                    <div class="iso-letter-badge">N</div>
+                                    <h4>Não-Ferrosos (Alumínio)</h4>
+                                    <p>Ligas de alumínio, cobre, bronze, latão, plásticos.</p>
+                                </div>
+                                <div class="material-option iso-s-card" data-iso="S">
+                                    <div class="iso-letter-badge">S</div>
+                                    <h4>Superligas & Titânio</h4>
+                                    <p>Inconel, Hastelloy, ligas de Titânio Ti6Al4V.</p>
+                                </div>
+                                <div class="material-option iso-h-card" data-iso="H">
+                                    <div class="iso-letter-badge">H</div>
+                                    <h4>Aços Endurecidos</h4>
+                                    <p>Aços temperados acima de 45 HRC até 65 HRC.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Passo 2: Operação -->
+                        <div class="wizard-step hidden" id="wizard-step-2">
+                            <h3>Selecione a Operação e Sub-operação</h3>
+                            <p class="step-subtitle">Escolha a categoria de usinagem e o tipo específico de corte.</p>
+                            
+                            <div class="op-main-selector-container">
+                                <h4>Operação Principal:</h4>
+                                <div class="op-main-selector">
+                                    <button type="button" class="op-main-btn active" data-main-op="torneamento">
+                                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none">
+                                            <rect x="2" y="9" width="6" height="6" rx="1"></rect>
+                                            <line x1="8" y1="12" x2="22" y2="12"></line>
+                                            <line x1="14" y1="8" x2="14" y2="16"></line>
+                                        </svg>
+                                        Torneamento
+                                    </button>
+                                    <button type="button" class="op-main-btn" data-main-op="fresamento">
+                                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none">
+                                            <circle cx="12" cy="12" r="9"></circle>
+                                            <circle cx="12" cy="12" r="3"></circle>
+                                            <line x1="12" y1="3" x2="12" y2="9"></line>
+                                            <line x1="12" y1="15" x2="12" y2="21"></line>
+                                            <line x1="3" y1="12" x2="9" y2="12"></line>
+                                            <line x1="15" y1="12" x2="21" y2="12"></line>
+                                        </svg>
+                                        Fresamento
+                                    </button>
+                                    <button type="button" class="op-main-btn" data-main-op="furacao">
+                                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none">
+                                            <path d="M12 2L12 22"></path>
+                                            <path d="M8 8L16 12L8 16"></path>
+                                            <path d="M8 14L16 18"></path>
+                                            <path d="M8 4L16 8"></path>
+                                        </svg>
+                                        Furação
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Sub-operações Torneamento -->
+                            <div class="sub-op-container" id="sub-ops-torneamento">
+                                <h4>Tipo de Torneamento:</h4>
+                                <div class="op-grid-interactive">
+                                    <div class="op-option selected" data-sub-op="acabamento">
+                                        <i data-lucide="sparkles"></i>
+                                        <h4>Acabamento</h4>
+                                        <p>Remoção fina, foco em tolerância dimensional e baixa rugosidade (Ra).</p>
+                                    </div>
+                                    <div class="op-option" data-sub-op="medio">
+                                        <i data-lucide="layers"></i>
+                                        <h4>Médio / Geral</h4>
+                                        <p>Torneamento geral, taxas médias de avanço. Equilíbrio.</p>
+                                    </div>
+                                    <div class="op-option" data-sub-op="desbaste">
+                                        <i data-lucide="hammer"></i>
+                                        <h4>Desbaste</h4>
+                                        <p>Alta taxa de remoção, cortes profundos e grandes taxas de avanço.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Sub-operações Fresamento (ocultas) -->
+                            <div class="sub-op-container hidden" id="sub-ops-fresamento">
+                                <h4>Tipo de Fresamento:</h4>
+                                <div class="op-grid-interactive">
+                                    <div class="op-option" data-sub-op="faceamento">
+                                        <i data-lucide="layout"></i>
+                                        <h4>Faceamento</h4>
+                                        <p>Usinagem de superfícies planas com cabeçotes de múltiplos insertos.</p>
+                                    </div>
+                                    <div class="op-option" data-sub-op="cavidades">
+                                        <i data-lucide="pocket"></i>
+                                        <h4>Canais / Cavidades</h4>
+                                        <p>Fresamento de rasgos de chaveta, contornos e cavidades.</p>
+                                    </div>
+                                    <div class="op-option" data-sub-op="alto-avanco">
+                                        <i data-lucide="zap"></i>
+                                        <h4>Alto Avanço (High Feed)</h4>
+                                        <p>Fresamento de alta produtividade com pequenas profundidades axiais.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Sub-operações Furação (ocultas) -->
+                            <div class="sub-op-container hidden" id="sub-ops-furacao">
+                                <h4>Tipo de Furação:</h4>
+                                <div class="op-grid-interactive">
+                                    <div class="op-option" data-sub-op="plena">
+                                        <i data-lucide="target"></i>
+                                        <h4>Furação Plena</h4>
+                                        <p>Furação direta em material maciço com broca intercambiável ou integral.</p>
+                                    </div>
+                                    <div class="op-option" data-sub-op="profunda">
+    <i data-lucide="drill"></i>
+    <h4>Furação Profunda</h4>
+    <p>Furação com profundidade superior a 5xD, exigindo controle de cavaco e refrigeração interna.</p>
+</div>
+                                    <div class="op-option" data-sub-op="alargamento">
+                                        <i data-lucide="sliders-horizontal"></i>
+                                        <h4>Alargamento</h4>
+                                        <p>Usinagem de acabamento final de furos para tolerância estreita H7.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="wizard-actions" style="margin-top: 1.5rem;">
+                                <button class="btn btn-secondary" id="btn-back-to-1">Voltar</button>
+                                <button class="btn btn-primary" id="btn-go-to-3">Avançar</button>
+                            </div>
+                        </div>
+
+                        <!-- Passo 3: Máquina -->
+                        <div class="wizard-step hidden" id="wizard-step-3">
+                            <h3>Configuração da Máquina & Diâmetro</h3>
+                            <p class="step-subtitle">Forneça os limites de máquina e o diâmetro de usinagem para validar a viabilidade do processo.</p>
+                            
+                            <div class="machine-form-layout">
+                                <div class="form-row">
+                                    <div class="input-group half">
+                                        <label for="mach-type-select">Tipo de Equipamento</label>
+                                        <select id="mach-type-select">
+                                            <option value="torno-cnc">Torno CNC / Centro de Torneamento</option>
+                                            <option value="centro-usinagem">Centro de Usinagem CNC</option>
+                                            <option value="convencional">Torno ou Fresadora Convencional</option>
+                                        </select>
+                                    </div>
+                                    <div class="input-group half">
+                                        <label for="mach-power-input">Potência do Spindle (Motor)</label>
+                                        <div class="input-with-unit">
+                                            <input type="number" id="mach-power-input" value="15" min="0.5" step="0.5">
+                                            <span class="unit">kW</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-row">
+                                    <div class="input-group half">
+                                        <label for="mach-rpm-input">Rotação Máxima do Spindle</label>
+                                        <div class="input-with-unit">
+                                            <input type="number" id="mach-rpm-input" value="6000" min="100" step="100">
+                                            <span class="unit">RPM</span>
+                                        </div>
+                                    </div>
+                                    <div class="input-group half">
+                                        <label for="mach-diameter-input">Diâmetro de Usinagem</label>
+                                        <div class="input-with-unit">
+                                            <input type="number" id="mach-diameter-input" value="80" min="0.1" step="any">
+                                            <span class="unit">mm</span>
+                                        </div>
+                                    </div>
+                                </div>
+<div class="input-group half">
+    <label for="mach-depth-input">Profundidade de Usinagem</label>
+    <div class="input-with-unit">
+        <input type="number" id="mach-depth-input" value="60" min="1">
+        <span class="unit">mm</span>
+    </div>
+</div>
+                                <div class="form-row">
+                                    <!-- Interface do Cone/Haste (Dinâmico conforme a operação) -->
+                                    <div class="input-group" id="mach-holder-interface-group">
+                                        <label for="mach-holder-select" id="mach-holder-label">Interface do Porta-Ferramenta (Haste)</label>
+                                        <select id="mach-holder-select">
+                                            <option value="20x20">Haste Quadrada 20x20 mm</option>
+                                            <option value="25x25" selected>Haste Quadrada 25x25 mm</option>
+                                            <option value="32x32">Haste Quadrada 32x32 mm</option>
+                                            <option value="d20">Barra de Mandrilar Interna Ø 20 mm</option>
+                                            <option value="d25">Barra de Mandrilar Interna Ø 25 mm</option>
+                                            <option value="d32">Barra de Mandrilar Interna Ø 32 mm</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="wizard-actions" style="margin-top: 1.5rem;">
+                                <button class="btn btn-secondary" id="btn-back-to-2">Voltar</button>
+                                <button class="btn btn-primary" id="btn-go-to-4">Avançar</button>
+                            </div>
+                        </div>
+
+                        <!-- Passo 4: Condições de Usinagem -->
+                        <div class="wizard-step hidden" id="wizard-step-4">
+                            <h3>Condições do Processo & Setup</h3>
+                            <p class="step-subtitle">Defina o ambiente físico de corte. Setup instável ou corte interrompido requerem ferramentas mais tenazes.</p>
+                            
+                            <div class="conditions-wizard-layout">
+                                <div class="condition-section">
+                                    <h4>1. Rigidez do Conjunto (Fixação da Peça & Balanço)</h4>
+                                    <div class="stability-grid-interactive">
+                                        <div class="stability-option" data-stability="good">
+                                            <i data-lucide="shield"></i>
+                                            <h4>Excelente / Alta Rigidez</h4>
+                                            <p>Sem vibrações, balanço de ferramenta curto e peça rigidamente fixada.</p>
+                                        </div>
+                                        <div class="stability-option selected" data-stability="normal">
+                                            <i data-lucide="shield-alert"></i>
+                                            <h4>Média / Estável</h4>
+                                            <p>Condições normais de oficina. Balanço médio.</p>
+                                        </div>
+                                        <div class="stability-option" data-stability="poor">
+                                            <i data-lucide="alert-triangle"></i>
+                                            <h4>Instável / Vibrações</h4>
+                                            <p>Balanço longo da ferramenta (L/D > 4), peças finas ou fixação simples.</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="condition-section" style="margin-top: 1.5rem;">
+                                    <h4>2. Tipo de Corte / Entrada no Material</h4>
+                                    <div class="cut-type-grid-interactive">
+                                        <div class="cut-type-option selected" data-cut-type="continuous">
+                                            <i data-lucide="repeat"></i>
+                                            <h4>Contínuo</h4>
+                                            <p>Corte ininterrupto constante (ex: torneamento cilíndrico liso).</p>
+                                        </div>
+                                        <div class="cut-type-option" data-cut-type="light">
+                                            <i data-lucide="hash"></i>
+                                            <h4>Levemente Interrompido</h4>
+                                            <p>Peças com furos transversais, chavetas ou cortes levemente instáveis.</p>
+                                        </div>
+                                        <div class="cut-type-option" data-cut-type="heavy">
+                                            <i data-lucide="grid"></i>
+                                            <h4>Fortemente Interrompido</h4>
+                                            <p>Corte em estrias, furos grandes, fundidos ásperos com crostas duras.</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="condition-section" style="margin-top: 1.5rem;">
+                                    <h4>3. Método de Refrigeração</h4>
+                                    <div class="coolant-grid-interactive">
+                                        <div class="coolant-option selected" data-coolant="internal">
+                                            <i data-lucide="droplet"></i>
+                                            <h4>Interna (CTS - Através da Ferramenta)</h4>
+                                            <p>Refrigeração dirigida sob pressão diretamente na aresta de corte.</p>
+                                        </div>
+                                        <div class="coolant-option" data-coolant="external">
+                                            <i data-lucide="droplets"></i>
+                                            <h4>Externa (Inundação Convencional)</h4>
+                                            <p>Jatos de emulsão dirigidos externamente para lavagem da cavidade.</p>
+                                        </div>
+                                        <div class="coolant-option" data-coolant="dry">
+                                            <i data-lucide="wind"></i>
+                                            <h4>A Seco / Ar Comprimido / MQL</h4>
+                                            <p>Usinagem a seco ou com micro-névoa (MQL) ideal para evitar choques térmicos.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="wizard-actions" style="margin-top: 1.5rem;">
+                                <button class="btn btn-secondary" id="btn-back-to-3">Voltar</button>
+                                <button class="btn btn-primary" id="btn-generate-rec">Ver Recomendação</button>
+                            </div>
+                        </div>
+
+                        <!-- Passo 5: Recomendação -->
+                        <div class="wizard-step hidden" id="wizard-step-5">
+                            <h3>Recomendação Automática de Ferramenta</h3>
+                            <p class="step-subtitle">Abaixo está a solução recomendada pelo sistema para o seu setup de usinagem.</p>
+                            
+                            <div class="rec-grid-layout">
+                                <!-- Coluna de Ferramental -->
+                                <div class="rec-col-tooling">
+                                    <div class="rec-subcard insert-subcard">
+                                        <div class="subcard-header">
+                                            <i data-lucide="layers"></i>
+                                            <h4>Inserto / Pastilha</h4>
+                                        </div>
+                                        <div class="subcard-content">
+                                            <div class="subcard-row">
+                                                <span class="subcard-label">Classe (Grade)</span>
+                                                <strong id="rec-grade-name" class="rec-value-highlight">HC-P25</strong>
+                                            </div>
+                                            <div class="subcard-row">
+                                                <span class="subcard-label">Geometria / Quebra-cavaco</span>
+                                                <span id="rec-geometry-name" class="rec-tag">CNMG 120408-PM</span>
+                                            </div>
+                                            <div class="subcard-row">
+                                                <span class="subcard-label">Revestimento do Inserto</span>
+                                                <p id="rec-coating-desc" class="rec-detail-text">CVD MTCVD TiCN + Al₂O₃</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="rec-subcard holder-subcard">
+                                        <div class="subcard-header">
+                                            <i data-lucide="pocket"></i>
+                                            <h4>Porta-Ferramenta / Suporte</h4>
+                                        </div>
+                                        <div class="subcard-content">
+                                            <div class="subcard-row">
+                                                <span class="subcard-label">Código Padrão ISO</span>
+                                                <strong id="rec-holder-name" class="rec-value-highlight">MCLNR 2525M12</strong>
+                                            </div>
+                                            <div class="subcard-row">
+                                                <span class="subcard-label">Conexão do Suporte</span>
+                                                <span id="rec-holder-interface" class="rec-tag">Haste Quadrada 25x25 mm</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Coluna de Parâmetros e Validação -->
+                                <div class="rec-col-params">
+                                    <div class="rec-subcard params-subcard">
+                                        <div class="subcard-header">
+                                            <i data-lucide="sliders"></i>
+                                            <h4>Parâmetros Iniciais Recomendados</h4>
+                                        </div>
+                                        <div class="subcard-content">
+                                            <div class="param-horizontal-grid">
+                                                <div class="param-val-box">
+                                                    <span>Vc (Velocidade)</span>
+                                                    <strong id="rec-param-vc-val">220 m/min</strong>
+                                                </div>
+                                                <div class="param-val-box">
+                                                    <span>f (Avanço)</span>
+                                                    <strong id="rec-param-feed-val">0.25 mm/v</strong>
+                                                </div>
+                                                <div class="param-val-box">
+                                                    <span>ap (Profundidade)</span>
+                                                    <strong id="rec-param-ap-val">2.0 mm</strong>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="rec-subcard check-subcard">
+                                        <div class="subcard-header">
+                                            <i data-lucide="activity"></i>
+                                            <h4>Análise de Capacidade da Máquina</h4>
+                                        </div>
+                                        <div class="subcard-content" id="rec-machine-check-container">
+                                            <!-- Preenchido dinamicamente via JS -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="wizard-actions rec-actions" style="margin-top: 2rem;">
+                                <button class="btn btn-secondary" id="btn-back-to-4">Voltar</button>
+                                <div class="btn-group-right">
+                                    <button class="btn btn-secondary" id="btn-reset-selection">Nova Seleção</button>
+                                    <button class="btn btn-primary" id="btn-export-to-calc">
+                                        <i data-lucide="calculator"></i> Exportar para Calculadora
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 4: SOLUÇÃO DE PROBLEMAS -->
+            <section id="troubleshooting" class="tab-content">
+                <div class="section-header">
+                    <h2>Guia de Solução de Problemas (Troubleshooting)</h2>
+                    <p>Identifique o tipo de desgaste do metal duro e saiba exatamente como corrigir o processo.</p>
+                </div>
+
+                <div class="trouble-layout">
+                    <!-- Barra de pesquisa e filtro -->
+                    <div class="glass-card search-filter-card">
+                        <div class="search-box">
+                                    <i data-lucide="search"></i>
+                            <input type="text" id="trouble-search" placeholder="Pesquisar desgaste (ex: trincas, lascamento, quebra)...">
+                        </div>
+                    </div>
+                    <!-- Grid de Desgastes -->
+                    <div class="wear-grid" id="wear-catalog">
+                        <!-- Os cards de desgaste serão gerados dinamicamente via JS -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 5: GERADOR DE PROPOSTA COMERCIAL -->
+            <section id="orcamentos" class="tab-content">
+                <div class="section-header">
+                    <h2>Gerador de Proposta Comercial (A4 PDF)</h2>
+                    <p>Gere e salve propostas técnico-comerciais profissionais contendo dados de corte, TCO e cotação de lote.</p>
+                </div>
+
+                <div class="calculator-grid">
+                    <!-- Painel de Inputs da Proposta (Esquerda) -->
+                    <div class="glass-card input-panel">
+                        <h3>Personalização da Proposta</h3>
+                        <form id="proposal-form" onsubmit="return false;">
+                            <div class="input-group">
+                                <label for="prop-cliente">Nome do Cliente / Empresa</label>
+                                <input type="text" id="prop-cliente" value="Cliente Teste Ltda." placeholder="Ex: Metalúrgica Alfa">
+                            </div>
+                            <div class="input-group">
+                                <label for="prop-contato">A/C (Engenheiro ou Comprador)</label>
+                                <input type="text" id="prop-contato" value="Eng. Carlos Silva" placeholder="Ex: João da Silva">
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="input-group half">
+                                    <label for="prop-prazo">Prazo de Entrega (Dias Úteis)</label>
+                                    <input type="number" id="prop-prazo" value="10" min="1">
+                                </div>
+                                <div class="input-group half">
+                                    <label for="prop-validade">Validade da Proposta (Dias)</label>
+                                    <input type="number" id="prop-validade" value="15" min="1">
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="input-group half">
+                                    <label for="prop-pagamento">Condição de Pagamento</label>
+                                    <select id="prop-pagamento">
+                                        <option value="Faturado 28 dias" selected>Faturado 28 dias</option>
+                                        <option value="Faturado 30/60 dias">Faturado 30/60 dias</option>
+                                        <option value="À Vista (PIX/TED)">À Vista (PIX/TED)</option>
+                                        <option value="50% Sinal / 50% Entrega">50% Sinal / 50% Entrega</option>
+                                    </select>
+                                </div>
+                                <div class="input-group half">
+                                    <label for="prop-frete">Tipo de Frete</label>
+                                    <select id="prop-frete">
+                                        <option value="CIF (Incluso / Grátis)" selected>CIF (Incluso)</option>
+                                        <option value="FOB (Por conta do Destinatário)">FOB (Destinatário)</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <hr style="margin: 1.5rem 0; opacity: 0.1;">
+                            
+                            <div class="btn-print-action-bar" style="display: flex; flex-direction: column; gap: 0.75rem;">
+                                <button type="button" class="btn btn-primary" onclick="imprimirProposta()" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 0.5rem; font-weight: 700;">
+                                    <i data-lucide="printer"></i>
+                                    Imprimir / Salvar PDF
+                                </button>
+                                <p style="font-size: 0.75rem; color: var(--text-muted); text-align: center; margin: 0;">
+                                    * Dica: Na tela de impressão, selecione "Salvar como PDF" nas opções de destino do seu celular ou computador.
+                                </p>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Visualização A4 da Proposta (Direita) -->
+                    <div class="output-panel" style="display: flex; flex-direction: column; gap: 1rem;">
+                        <h3 class="btn-print-action-bar" style="margin-bottom: 0;">Visualização da Proposta A4</h3>
+                        
+                        <div class="proposal-preview-sheet">
+                            <!-- Cabeçalho -->
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #0f172a; padding-bottom: 1rem; margin-bottom: 1.5rem;">
+                                <div>
+                                    <h1 style="margin: 0; font-size: 2.2rem; color: #f97316 !important; font-weight: 800; line-height: 1;">Duro<span style="color: #0f172a !important;">Cut</span></h1>
+                                    <span style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; color: #64748b; font-weight: 600;">Metal Duro & Performance de Usinagem</span>
+                                </div>
+                                <div style="text-align: right;">
+                                    <h3 style="margin: 0 0 0.25rem 0; font-size: 1.1rem; text-transform: uppercase; color: #0f172a;">Proposta Técnica</h3>
+                                    <span style="font-size: 0.8rem; color: #475569; display: block;">REF: <strong id="pdf-ref-id">PRO-2026-4821</strong></span>
+                                    <span style="font-size: 0.8rem; color: #475569; display: block;" id="pdf-data-emissao">Data: 02/07/2026</span>
+                                </div>
+                            </div>
+
+                            <!-- Destinatário -->
+                            <div style="margin-bottom: 1.5rem; font-size: 0.85rem; background: #f8fafc; padding: 0.75rem 1rem; border-radius: 6px; border-left: 4px solid #f97316;">
+                                <div style="margin-bottom: 0.2rem;"><strong>Cliente:</strong> <span id="pdf-cliente-nome">Cliente Teste Ltda.</span></div>
+                                <div><strong>A/C:</strong> <span id="pdf-cliente-contato">Eng. Carlos Silva</span></div>
+                            </div>
+
+                            <p style="margin-bottom: 1.25rem; font-size: 0.85rem;">
+                                Apresentamos abaixo nossa proposta técnico-comercial para o fornecimento de ferramentas de alta performance e os parâmetros de usinagem sugeridos baseados nas análises realizadas.
+                            </p>
+
+                            <!-- Seção 1: Especificação Técnica e Parâmetros Sugeridos -->
+                            <h4 style="font-size: 0.95rem; text-transform: uppercase; border-bottom: 1px solid #cbd5e1; padding-bottom: 0.25rem; margin-top: 1.25rem; margin-bottom: 0.5rem;">
+                                1. Especificações Técnicas & Parâmetros de Corte
+                            </h4>
+                            <table class="proposal-table">
+                                <thead>
+                                    <tr>
+                                        <th>Operação</th>
+                                        <th>Material Peça</th>
+                                        <th>Rotação (n)</th>
+                                        <th>Avanço (Vf)</th>
+                                        <th>Prof. Corte (ap)</th>
+                                        <th>Rugosidade (Ra)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td id="pdf-dados-operacao">Torneamento</td>
+                                        <td id="pdf-dados-material">Aço Carbono (ISO P)</td>
+                                        <td><span id="pdf-dados-rpm">875</span> RPM</td>
+                                        <td><span id="pdf-dados-vf">219</span> mm/min</td>
+                                        <td><span id="pdf-dados-ap">2.0</span> mm</td>
+                                        <td><span id="pdf-dados-ra">2.44</span> µm</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <!-- Seção 2: Viabilidade Financeira (TCO) -->
+                            <div id="pdf-secao-tco">
+                                <h4 style="font-size: 0.95rem; text-transform: uppercase; border-bottom: 1px solid #cbd5e1; padding-bottom: 0.25rem; margin-top: 1.5rem; margin-bottom: 0.5rem;">
+                                    2. Estudo de Custos e Retorno de Investimento (TCO)
+                                </h4>
+                                <div class="proposal-savings-banner">
+                                    <h3 style="font-size: 1rem; font-weight: 700; color: #166534 !important; margin: 0;">ECONOMIA ANUAL ESTIMADA:</h3>
+                                    <span id="pdf-tco-economia-anual" style="font-size: 1.2rem; font-weight: 800;">R$ 12.500,00</span>
+                                </div>
+                                <table class="proposal-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Indicador TCO</th>
+                                            <th>Ferramenta Atual</th>
+                                            <th>Proposto DuroCut</th>
+                                            <th>Melhoria / Redução</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>Custo Unitário por Peça</strong></td>
+                                            <td id="pdf-tco-custo-peca-atual">R$ 1,50</td>
+                                            <td id="pdf-tco-custo-peca-prop">R$ 1,22</td>
+                                            <td id="pdf-tco-melhoria-custo" style="color: #166534; font-weight: bold;">- 18.7%</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Vida Útil (Peças / Aresta)</strong></td>
+                                            <td id="pdf-tco-vida-atual">30 peças</td>
+                                            <td id="pdf-tco-vida-prop">45 peças</td>
+                                            <td id="pdf-tco-melhoria-vida" style="color: #166534; font-weight: bold;">+ 50.0%</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- Seção 3: Cotação Comercial das Ferramentas -->
+                            <h4 style="font-size: 0.95rem; text-transform: uppercase; border-bottom: 1px solid #cbd5e1; padding-bottom: 0.25rem; margin-top: 1.5rem; margin-bottom: 0.5rem;">
+                                3. Cotação Comercial
+                            </h4>
+                            <table class="proposal-table">
+                                <thead>
+                                    <tr>
+                                        <th>Item / Descrição</th>
+                                        <th>Tipo</th>
+                                        <th>Qtd. Lote</th>
+                                        <th>Preço Unitário</th>
+                                        <th>Valor Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Ferramenta de Metal Duro Integral Customizada (Ø <span id="pdf-comercial-diam">12</span>mm)</td>
+                                        <td id="pdf-comercial-tipo" style="text-transform: uppercase;">Standard</td>
+                                        <td><span id="pdf-comercial-qtd">10</span> pçs</td>
+                                        <td id="pdf-comercial-preco-unit">R$ 380,00</td>
+                                        <td id="pdf-comercial-preco-total" style="font-weight: 700;">R$ 3.800,00</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <!-- Condições Gerais -->
+                            <h4 style="font-size: 0.85rem; text-transform: uppercase; border-bottom: 1px solid #cbd5e1; padding-bottom: 0.15rem; margin-top: 1.5rem; margin-bottom: 0.5rem;">
+                                4. Condições de Fornecimento
+                            </h4>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; font-size: 0.75rem; color: #475569; margin-bottom: 2rem;">
+                                <div><strong>Prazo de Entrega:</strong> <span id="pdf-cond-prazo">10</span> dias úteis</div>
+                                <div><strong>Condição de Pagamento:</strong> <span id="pdf-cond-pagamento">Faturado 28 dias</span></div>
+                                <div><strong>Validade da Proposta:</strong> <span id="pdf-cond-validade">15</span> dias</div>
+                                <div><strong>Tipo de Frete:</strong> <span id="pdf-cond-frete">CIF (Incluso)</span></div>
+                            </div>
+
+                            <!-- Assinatura -->
+                            <div style="margin-top: 3.5rem; display: flex; justify-content: space-between; font-size: 0.8rem;">
+                                <div style="text-align: center; width: 45%;">
+                                    <div style="border-top: 1px solid #94a3b8; width: 100%; margin-bottom: 0.25rem;"></div>
+                                    <strong>DuroCut Ferramentas</strong>
+                                    <span style="display: block; font-size: 0.7rem; color: #64748b;">Representante Técnico</span>
+                                </div>
+                                <div style="text-align: center; width: 45%;">
+                                    <div style="border-top: 1px solid #94a3b8; width: 100%; margin-bottom: 0.25rem;"></div>
+                                    <strong id="pdf-ass-cliente-nome">Cliente Teste Ltda.</strong>
+                                    <span style="display: block; font-size: 0.7rem; color: #64748b;">De acordo / Engenharia</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 6: FABRICAÇÃO DE FERRAMENTAS (STANDARD E ESPECIAIS) -->
+            <section id="fabricacao" class="tab-content">
+                <div class="section-header">
+                    <h2>Orçamentos de Fabricação de Ferramentas</h2>
+                    <p>Precificação de ferramentas STANDARD e Especiais com diluição de setup e análise de margens.</p>
+                </div>
+
+                <div class="calculator-grid">
+                    <!-- Painel de Variáveis de Entrada -->
+                    <div class="glass-card input-panel">
+                        <h3>Custos de Entrada & Operações</h3>
+                        <form id="fab-form" onsubmit="return false;">
+                            <!-- Tipo de Ferramenta & Lote -->
+                            <div class="form-row" style="margin-bottom: 1.5rem;">
+                                <div class="input-group half">
+                                    <label>Tipo de Precificação</label>
+                                    <div class="toggle-selector" style="display: flex; gap: 0.5rem; background: rgba(255,255,255,0.02); padding: 0.25rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+                                        <button type="button" class="btn-toggle active" id="btn-fab-tipo-std" onclick="setFabTipo('standard')" style="flex: 1; padding: 0.5rem; border-radius: 8px; font-family: var(--font-heading); font-weight: 600; cursor: pointer; border: none; transition: var(--transition); background: var(--secondary); color: #fff;">STANDARD</button>
+                                        <button type="button" class="btn-toggle" id="btn-fab-tipo-esp" onclick="setFabTipo('especial')" style="flex: 1; padding: 0.5rem; border-radius: 8px; font-family: var(--font-heading); font-weight: 600; cursor: pointer; border: none; transition: var(--transition); background: transparent; color: var(--text-muted);">ESPECIAL</button>
+                                    </div>
+                                </div>
+                                <div class="input-group half">
+                                    <label for="fab-quantidade">Qtd. do Lote (Peças)</label>
+                                    <div class="input-with-unit">
+                                        <input type="number" id="fab-quantidade" value="10" min="1" step="1">
+                                        <span class="unit">unid.</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 1. Geometria & Dimensões (Mestre Especialista) -->
+                            <h4 style="font-family: var(--font-heading); margin: 1.5rem 0 0.75rem 0; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.25rem; font-size: 1rem; color: var(--primary-light); display: flex; justify-content: space-between; align-items: center;">
+                                1. Geometria & Dimensões da Ferramenta
+                                <label style="font-size: 0.75rem; font-weight: normal; color: var(--text-muted); display: flex; align-items: center; gap: 0.25rem; cursor: pointer; margin: 0;">
+                                    <input type="checkbox" id="fab-auto-estimar" checked onchange="onFabGeometryChange()" style="cursor: pointer; margin: 0; width: 14px; height: 14px;"> Estimar Auto
+                                </label>
+                            </h4>
+                            
+                            <div class="form-row">
+                                <div class="input-group half">
+                                    <label for="fab-geo-tipo">Categoria</label>
+                                    <select id="fab-geo-tipo" onchange="onFabGeometryChange()">
+                                        <option value="broca">Broca (Drill)</option>
+                                        <option value="fresa" selected>Fresa (Endmill)</option>
+                                    </select>
+                                </div>
+                                <div class="input-group half">
+                                    <label for="fab-geo-diametro">Diâmetro (D)</label>
+                                    <select id="fab-geo-diametro" onchange="onFabGeometryChange()">
+                                        <option value="4">Ø 4 mm</option>
+                                        <option value="6">Ø 6 mm</option>
+                                        <option value="8">Ø 8 mm</option>
+                                        <option value="10">Ø 10 mm</option>
+                                        <option value="12" selected>Ø 12 mm</option>
+                                        <option value="16">Ø 16 mm</option>
+                                        <option value="20">Ø 20 mm</option>
+                                        <option value="25">Ø 25 mm</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="input-group half">
+                                    <label for="fab-geo-comprimento">Comprimento Total (L)</label>
+                                    <select id="fab-geo-comprimento" onchange="onFabGeometryChange()">
+                                        <option value="50">50 mm (6 pçs/bastão)</option>
+                                        <option value="65">65 mm (5 pçs/bastão)</option>
+                                        <option value="75" selected>75 mm (4 pçs/bastão)</option>
+                                        <option value="105">105 mm (3 pçs/bastão)</option>
+                                        <option value="150">150 mm (2 pçs/bastão)</option>
+                                    </select>
+                                </div>
+                                <div class="input-group half">
+                                    <label id="lbl-fab-geo-param" for="fab-geo-param">Cortes / Razão</label>
+                                    <select id="fab-geo-param" onchange="onFabGeometryChange()">
+                                        <!-- Preenchido dinamicamente via JS -->
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- 2. Aproveitamento de Bastão -->
+                            <h4 style="font-family: var(--font-heading); margin: 1.5rem 0 0.75rem 0; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.25rem; font-size: 1rem; color: var(--primary-light);">2. Alocação de Substrato (Bastão 330mm)</h4>
+                            
+                            <div class="form-row">
+                                <div class="input-group half">
+                                    <label for="fab-mp-preco-bastao-input">Preço do Bastão Inteiro (R$)</label>
+                                    <div class="input-with-unit">
+                                        <span class="prefix">R$</span>
+                                        <input type="number" id="fab-mp-preco-bastao-input" value="250.00" min="0" step="any">
+                                    </div>
+                                </div>
+                                <div class="input-group half">
+                                    <label for="fab-mp-metodo">Método de Alocação</label>
+                                    <select id="fab-mp-metodo" onchange="onFabGeometryChange()">
+                                        <option value="milimetro" selected>Milímetro (Mais Competitivo)</option>
+                                        <option value="proporcional">Rendimento (Proporcional Seguro)</option>
+                                        <option value="bastao-cheio">Lote Fechado (Bastão Inteiro)</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="glass-card" style="margin-bottom: 1.5rem; padding: 1rem; background: rgba(0,0,0,0.15); border-color: rgba(255,255,255,0.05);">
+                                <div style="font-size: 0.8rem; display: flex; flex-direction: column; gap: 0.35rem;">
+                                    <div style="display: flex; justify-content: space-between;">
+                                        <span style="color: var(--text-muted);">Preço do Bastão (Ø <span id="info-fab-mp-diam-label">12</span>):</span>
+                                        <strong id="info-fab-mp-preco-bastao">R$ 250,00</strong>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between;">
+                                        <span style="color: var(--text-muted);">Rendimento por Bastão:</span>
+                                        <strong id="info-fab-mp-aproveitamento">4 ferramentas</strong>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between;">
+                                        <span style="color: var(--text-muted);">Custo Unitário do Blank:</span>
+                                        <strong id="info-fab-mp-custo-unit-blank" style="color: var(--primary-light);">R$ 62,50</strong>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between;">
+                                        <span style="color: var(--text-muted);">Bastões Necessários para Lote:</span>
+                                        <strong id="info-fab-mp-bastoes-qtd">3 bastões</strong>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between;">
+                                        <span style="color: var(--text-muted);">Sobras e Resíduos no Lote:</span>
+                                        <strong id="info-fab-mp-sobras">10 usadas / 2 sobras</strong>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 3. Mão de Obra e Processos -->
+                            <h4 style="font-family: var(--font-heading); margin: 1.5rem 0 0.75rem 0; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.25rem; font-size: 1rem; color: var(--primary-light);">3. Tempos de Processo & Mão de Obra</h4>
+                            
+                            <!-- Card Simplificado para Ferramentas STANDARD -->
+                            <div id="fab-processos-standard-container" class="glass-card" style="margin-bottom: 1.5rem; padding: 1.25rem; background: rgba(0,0,0,0.15); border-color: rgba(255,255,255,0.05); display: none;">
+                                <div style="font-size: 0.9rem; display: flex; flex-direction: column; gap: 0.75rem;">
+                                    <div class="form-row">
+                                        <div class="input-group half">
+                                            <label for="fab-std-cnc-rate">Taxa Horária CNC (R$/h)</label>
+                                            <div class="input-with-unit">
+                                                <span class="prefix">R$</span>
+                                                <input type="number" id="fab-std-cnc-rate" value="120.00" min="0">
+                                            </div>
+                                        </div>
+                                        <div class="input-group half">
+                                            <label for="fab-std-cnc-setup">Tempo Setup CNC (h)</label>
+                                            <div class="input-with-unit">
+                                                <input type="number" id="fab-std-cnc-setup" value="0.50" min="0" step="0.05">
+                                                <span class="unit">h</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 0.75rem; margin-top: 0.25rem;">
+                                        <span style="color: var(--text-muted);">Tempo Operação CNC Estimado:</span>
+                                        <strong id="fab-std-cnc-time-display" style="color: var(--secondary-light); font-size: 1rem;">6,00 min / ferramenta</strong>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Tabela Completa para Ferramentas Especiais -->
+                            <div id="fab-processos-especiais-container" class="table-container" style="margin-bottom: 1.5rem; overflow-x: auto;">
+                                <table style="width: 100%; border-collapse: collapse; font-size: 0.85rem; text-align: left;">
+                                    <thead>
+                                        <tr style="border-bottom: 1px solid var(--border-color); color: var(--text-muted);">
+                                            <th style="padding: 0.5rem 0.25rem;">Processo</th>
+                                            <th style="padding: 0.5rem 0.25rem; width: 65px;">Setup (h)</th>
+                                            <th style="padding: 0.5rem 0.25rem; width: 65px;">Oper. (h)</th>
+                                            <th style="padding: 0.5rem 0.25rem; width: 75px;">R$/Hora</th>
+                                            <th style="padding: 0.5rem 0.25rem; text-align: right; width: 75px;">Setup (R$)</th>
+                                            <th style="padding: 0.5rem 0.25rem; text-align: right; width: 75px;">Oper. (R$)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="fab-processos-body">
+                                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.03);">
+                                            <td style="padding: 0.4rem 0.25rem; font-weight: 600;">Corte</td>
+                                            <td style="padding: 0.4rem 0.25rem;"><input type="number" class="fab-setup-time" data-proc="corte" value="0.1" min="0" step="0.05" style="padding: 0.25rem; font-size: 0.85rem;"></td>
+                                            <td style="padding: 0.4rem 0.25rem;"><input type="number" class="fab-oper-time" data-proc="corte" value="0.05" min="0" step="0.01" style="padding: 0.25rem; font-size: 0.85rem;"></td>
+                                            <td style="padding: 0.4rem 0.25rem;"><input type="number" class="fab-hour-rate" data-proc="corte" value="50" min="0" style="padding: 0.25rem; font-size: 0.85rem;"></td>
+                                            <td style="padding: 0.4rem 0.25rem; text-align: right; color: var(--text-muted); font-weight: 500;"><span class="fab-calc-setup-cost" data-proc="corte">R$ 0,00</span></td>
+                                            <td style="padding: 0.4rem 0.25rem; text-align: right; color: var(--text-muted); font-weight: 500;"><span class="fab-calc-oper-cost" data-proc="corte">R$ 0,00</span></td>
+                                        </tr>
+                                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.03);">
+                                            <td style="padding: 0.4rem 0.25rem; font-weight: 600;">Solda</td>
+                                            <td style="padding: 0.4rem 0.25rem;"><input type="number" class="fab-setup-time" data-proc="solda" value="0.0" min="0" step="0.05" style="padding: 0.25rem; font-size: 0.85rem;"></td>
+                                            <td style="padding: 0.4rem 0.25rem;"><input type="number" class="fab-oper-time" data-proc="solda" value="0.0" min="0" step="0.01" style="padding: 0.25rem; font-size: 0.85rem;"></td>
+                                            <td style="padding: 0.4rem 0.25rem;"><input type="number" class="fab-hour-rate" data-proc="solda" value="65" min="0" style="padding: 0.25rem; font-size: 0.85rem;"></td>
+                                            <td style="padding: 0.4rem 0.25rem; text-align: right; color: var(--text-muted); font-weight: 500;"><span class="fab-calc-setup-cost" data-proc="solda">R$ 0,00</span></td>
+                                            <td style="padding: 0.4rem 0.25rem; text-align: right; color: var(--text-muted); font-weight: 500;"><span class="fab-calc-oper-cost" data-proc="solda">R$ 0,00</span></td>
+                                        </tr>
+                                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.03);">
+                                            <td style="padding: 0.4rem 0.25rem; font-weight: 600;">Torno</td>
+                                            <td style="padding: 0.4rem 0.25rem;"><input type="number" class="fab-setup-time" data-proc="torno" value="0.0" min="0" step="0.05" style="padding: 0.25rem; font-size: 0.85rem;"></td>
+                                            <td style="padding: 0.4rem 0.25rem;"><input type="number" class="fab-oper-time" data-proc="torno" value="0.0" min="0" step="0.01" style="padding: 0.25rem; font-size: 0.85rem;"></td>
+                                            <td style="padding: 0.4rem 0.25rem;"><input type="number" class="fab-hour-rate" data-proc="torno" value="70" min="0" style="padding: 0.25rem; font-size: 0.85rem;"></td>
+                                            <td style="padding: 0.4rem 0.25rem; text-align: right; color: var(--text-muted); font-weight: 500;"><span class="fab-calc-setup-cost" data-proc="torno">R$ 0,00</span></td>
+                                            <td style="padding: 0.4rem 0.25rem; text-align: right; color: var(--text-muted); font-weight: 500;"><span class="fab-calc-oper-cost" data-proc="torno">R$ 0,00</span></td>
+                                        </tr>
+                                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.03);">
+                                            <td style="padding: 0.4rem 0.25rem; font-weight: 600;">Fresa</td>
+                                            <td style="padding: 0.4rem 0.25rem;"><input type="number" class="fab-setup-time" data-proc="fresa" value="0.0" min="0" step="0.05" style="padding: 0.25rem; font-size: 0.85rem;"></td>
+                                            <td style="padding: 0.4rem 0.25rem;"><input type="number" class="fab-oper-time" data-proc="fresa" value="0.0" min="0" step="0.01" style="padding: 0.25rem; font-size: 0.85rem;"></td>
+                                            <td style="padding: 0.4rem 0.25rem;"><input type="number" class="fab-hour-rate" data-proc="fresa" value="80" min="0" style="padding: 0.25rem; font-size: 0.85rem;"></td>
+                                            <td style="padding: 0.4rem 0.25rem; text-align: right; color: var(--text-muted); font-weight: 500;"><span class="fab-calc-setup-cost" data-proc="fresa">R$ 0,00</span></td>
+                                            <td style="padding: 0.4rem 0.25rem; text-align: right; color: var(--text-muted); font-weight: 500;"><span class="fab-calc-oper-cost" data-proc="fresa">R$ 0,00</span></td>
+                                        </tr>
+                                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.03);">
+                                            <td style="padding: 0.4rem 0.25rem; font-weight: 600;">Retífica</td>
+                                            <td style="padding: 0.4rem 0.25rem;"><input type="number" class="fab-setup-time" data-proc="retifica" value="0.2" min="0" step="0.05" style="padding: 0.25rem; font-size: 0.85rem;"></td>
+                                            <td style="padding: 0.4rem 0.25rem;"><input type="number" class="fab-oper-time" data-proc="retifica" value="0.08" min="0" step="0.01" style="padding: 0.25rem; font-size: 0.85rem;"></td>
+                                            <td style="padding: 0.4rem 0.25rem;"><input type="number" class="fab-hour-rate" data-proc="retifica" value="95" min="0" style="padding: 0.25rem; font-size: 0.85rem;"></td>
+                                            <td style="padding: 0.4rem 0.25rem; text-align: right; color: var(--text-muted); font-weight: 500;"><span class="fab-calc-setup-cost" data-proc="retifica">R$ 0,00</span></td>
+                                            <td style="padding: 0.4rem 0.25rem; text-align: right; color: var(--text-muted); font-weight: 500;"><span class="fab-calc-oper-cost" data-proc="retifica">R$ 0,00</span></td>
+                                        </tr>
+                                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.03);">
+                                            <td style="padding: 0.4rem 0.25rem; font-weight: 600; color: #fb923c; display: flex; align-items: center; gap: 0.25rem;">CNC <svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" stroke-width="2" fill="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></td>
+                                            <td style="padding: 0.4rem 0.25rem;"><input type="number" class="fab-setup-time" data-proc="cnc" value="0.5" min="0" step="0.1" style="padding: 0.25rem; font-size: 0.85rem;"></td>
+                                            <td style="padding: 0.4rem 0.25rem;"><input type="number" class="fab-oper-time" id="fab-cnc-oper-time" data-proc="cnc" value="0.15" min="0" step="0.01" style="padding: 0.25rem; font-size: 0.85rem;"></td>
+                                            <td style="padding: 0.4rem 0.25rem;"><input type="number" class="fab-hour-rate" data-proc="cnc" value="120" min="0" style="padding: 0.25rem; font-size: 0.85rem;"></td>
+                                            <td style="padding: 0.4rem 0.25rem; text-align: right; color: var(--text-muted); font-weight: 500;"><span class="fab-calc-setup-cost" data-proc="cnc">R$ 0,00</span></td>
+                                            <td style="padding: 0.4rem 0.25rem; text-align: right; color: var(--text-muted); font-weight: 500;"><span class="fab-calc-oper-cost" data-proc="cnc">R$ 0,00</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- Revestimento & Custos Adicionais -->
+                            <div class="form-row">
+                                <div class="input-group half">
+                                    <label for="fab-revestimento">Revestimento Industrial</label>
+                                    <select id="fab-revestimento" onchange="onFabRevestimentoChange()">
+                                        <option value="sem-cobertura" data-cost="0">Sem Cobertura (Polido)</option>
+                                        <option value="tin" data-cost="15">TiN - Nitreto de Titânio (Padrão)</option>
+                                        <option value="tialn" data-cost="22" selected>TiAlN - Nitreto de Titânio e Alumínio</option>
+                                        <option value="alcrn" data-cost="28">AlCrN - Nitreto de Alumínio e Cromo</option>
+                                        <option value="dlc" data-cost="45">DLC - Diamond-like Carbon (Premium)</option>
+                                        <option value="custom" data-cost="0">Personalizado...</option>
+                                    </select>
+                                </div>
+                                <div class="input-group half">
+                                    <label for="fab-revestimento-custo">Custo Unit. Cobertura (R$)</label>
+                                    <div class="input-with-unit">
+                                        <span class="prefix">R$</span>
+                                        <input type="number" id="fab-revestimento-custo" value="22.00" min="0" step="any">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="input-group half">
+                                    <label for="fab-frete">Custo de Frete Total</label>
+                                    <div class="input-with-unit">
+                                        <span class="prefix">R$</span>
+                                        <input type="number" id="fab-frete" value="50.00" min="0" step="any">
+                                    </div>
+                                </div>
+                                <div class="input-group half">
+                                    <label for="fab-projeto">Custo Projeto / Desenho</label>
+                                    <div class="input-with-unit">
+                                        <span class="prefix">R$</span>
+                                        <input type="number" id="fab-projeto" value="0.00" min="0" step="any">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="input-group half">
+                                    <label for="fab-impostos">Impostos (%)</label>
+                                    <div class="input-with-unit">
+                                        <input type="number" id="fab-impostos" value="12" min="0" max="100">
+                                        <span class="unit">%</span>
+                                    </div>
+                                </div>
+                                <div class="input-group half">
+                                    <label for="fab-margem">Margem Desejada (%)</label>
+                                    <div class="input-with-unit">
+                                        <input type="number" id="fab-margem" value="35" min="0" max="500">
+                                        <span class="unit">%</span>
+                                    </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Painel de Resultados & Competitividade -->
+                    <div class="glass-card output-panel">
+                        <h3>Resultados da Fabricação</h3>
+                        <div class="results-grid">
+                            <div class="result-card highlight">
+                                <span class="result-label">Custo Unitário Base</span>
+                                <span class="result-value" id="res-fab-custo-base">R$ 0,00</span>
+                                <span class="result-unit">por ferramenta</span>
+                            </div>
+                            <div class="result-card highlight" style="background: rgba(16, 185, 129, 0.02); border-color: rgba(16, 185, 129, 0.2);">
+                                <span class="result-label" style="color: var(--success);">Preço Venda Sugerido</span>
+                                <span class="result-value" id="res-fab-preco-venda" style="color: var(--success);">R$ 0,00</span>
+                                <span class="result-unit">com margem + impostos</span>
+                            </div>
+                            <div class="result-card">
+                                <span class="result-label">Custo do Lote Inteiro</span>
+                                <span class="result-value" id="res-fab-custo-lote">R$ 0,00</span>
+                                <span class="result-unit">fabricação total</span>
+                            </div>
+                            <div class="result-card">
+                                <span class="result-label">Setup Diluído Unitário</span>
+                                <span class="result-value" id="res-fab-setup-unit">R$ 0,00</span>
+                                <span class="result-unit">diluição no lote</span>
+                            </div>
+                        </div>
+
+                        <!-- Detalhamento de Custos -->
+                        <div class="glass-card" style="margin-top: 1.5rem; padding: 1.25rem; background: rgba(0,0,0,0.2);">
+                            <h4 style="font-family: var(--font-heading); margin-bottom: 0.75rem; font-size: 0.95rem; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.25rem;">Composição Detalhada do Preço Unitário</h4>
+                            <div style="font-size: 0.85rem; display: flex; flex-direction: column; gap: 0.5rem;">
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span style="color: var(--text-muted);">Matéria-Prima (Blank):</span>
+                                    <strong id="det-fab-mp">R$ 0,00</strong>
+                                </div>
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span style="color: var(--text-muted);">Mão de Obra Direta (Operação):</span>
+                                    <strong id="det-fab-mo">R$ 0,00</strong>
+                                </div>
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span style="color: var(--text-muted);">Setup de Máquinas (Diluído):</span>
+                                    <strong id="det-fab-setup">R$ 0,00</strong>
+                                </div>
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span style="color: var(--text-muted);">Cobertura (Revestimento):</span>
+                                    <strong id="det-fab-revest">R$ 0,00</strong>
+                                </div>
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span style="color: var(--text-muted);">Custos Logísticos/Eng (Frete/Proj):</span>
+                                    <strong id="det-fab-log">R$ 0,00</strong>
+                                </div>
+                                <div style="border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 0.25rem; display: flex; justify-content: space-between; font-weight: 700;">
+                                    <span>CUSTO UNITÁRIO BASE:</span>
+                                    <span id="det-fab-total-base">R$ 0,00</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; color: var(--text-muted);">
+                                    <span>Incidência de Impostos:</span>
+                                    <span id="det-fab-imposto-val">R$ 0,00</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; color: var(--success);">
+                                    <span>Margem Adicionada:</span>
+                                    <span id="det-fab-margem-val">R$ 0,00</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Simulador de Lotes e Preço Unitário -->
+                        <div class="glass-card" style="margin-top: 1.5rem; padding: 1.25rem; border-color: rgba(59, 130, 246, 0.15);">
+                            <h4 style="font-family: var(--font-heading); margin-bottom: 0.5rem; font-size: 0.95rem; display: flex; align-items: center; gap: 0.4rem; color: #60a5fa;">
+                                <i data-lucide="trending-down" style="width:16px; height:16px;"></i> Curva de Diluição de Lote & Preço
+                            </h4>
+                            <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 1rem;">Veja abaixo o preço de venda sugerido unitário se o cliente comprar em diferentes volumes de fabricação. Utilize isso para negociar!</p>
+                            
+                            <div class="fab-chart-container" style="display: flex; flex-direction: column; gap: 0.75rem;">
+                                <!-- Bar 1 -->
+                                <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem;">
+                                    <span style="width: 50px; font-weight: 600; color: var(--text-muted);">1 peça:</span>
+                                    <div style="flex: 1; background: rgba(255,255,255,0.05); height: 16px; border-radius: 4px; overflow: hidden; position: relative;">
+                                        <div id="fab-bar-qty1" style="background: var(--danger); height: 100%; width: 100%; transition: width 0.3s ease;"></div>
+                                    </div>
+                                    <span id="fab-label-qty1" style="width: 75px; text-align: right; font-weight: 700; color: var(--text-main);">R$ 0,00</span>
+                                </div>
+                                <!-- Bar 5 -->
+                                <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem;">
+                                    <span style="width: 50px; font-weight: 600; color: var(--text-muted);">5 peças:</span>
+                                    <div style="flex: 1; background: rgba(255,255,255,0.05); height: 16px; border-radius: 4px; overflow: hidden; position: relative;">
+                                        <div id="fab-bar-qty5" style="background: var(--primary); height: 100%; width: 80%; transition: width 0.3s ease;"></div>
+                                    </div>
+                                    <span id="fab-label-qty5" style="width: 75px; text-align: right; font-weight: 700; color: var(--text-main);">R$ 0,00</span>
+                                </div>
+                                <!-- Bar 10 -->
+                                <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem;">
+                                    <span style="width: 50px; font-weight: 600; color: var(--text-muted);">10 peças:</span>
+                                    <div style="flex: 1; background: rgba(255,255,255,0.05); height: 16px; border-radius: 4px; overflow: hidden; position: relative;">
+                                        <div id="fab-bar-qty10" style="background: var(--secondary); height: 100%; width: 60%; transition: width 0.3s ease;"></div>
+                                    </div>
+                                    <span id="fab-label-qty10" style="width: 75px; text-align: right; font-weight: 700; color: var(--text-main);">R$ 0,00</span>
+                                </div>
+                                <!-- Bar 20 -->
+                                <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem;">
+                                    <span style="width: 50px; font-weight: 600; color: var(--text-muted);">20 peças:</span>
+                                    <div style="flex: 1; background: rgba(255,255,255,0.05); height: 16px; border-radius: 4px; overflow: hidden; position: relative;">
+                                        <div id="fab-bar-qty20" style="background: var(--success); height: 100%; width: 45%; transition: width 0.3s ease;"></div>
+                                    </div>
+                                    <span id="fab-label-qty20" style="width: 75px; text-align: right; font-weight: 700; color: var(--success);">R$ 0,00</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+    <!-- Modal de Detalhes do Desgaste -->
+    <div class="modal-backdrop" id="wear-modal">
+        <div class="glass-card modal-container">
+            <button class="modal-close-btn" id="modal-close">
+                <i data-lucide="x"></i>
+            </button>
+            <div class="modal-header">
+                <h3 id="modal-title">Desgaste de Flanco</h3>
+                <span class="modal-badge-type" id="modal-type-badge">Desgaste Normal</span>
+            </div>
+            <div class="modal-body-layout">
+                <div class="modal-graphic-col">
+                    <div class="wear-diagram-container" id="modal-diagram-container">
+                        <!-- SVG renderizado aqui -->
+                    </div>
+                    <p class="diagram-caption">Ilustração representativa do dano na aresta de corte.</p>
+                </div>
+                <div class="modal-info-col">
+                    <div class="info-block">
+                        <h4>O que é?</h4>
+                        <p id="modal-description">É a abrasão na superfície lateral da pastilha causada pelo contato mecânico direto com a peça.</p>
+                    </div>
+                    <div class="info-block">
+                        <h4>Principais Causas</h4>
+                        <ul class="cause-list" id="modal-causes">
+                            <li>Velocidade de corte alta demais</li>
+                            <li>Classe de metal duro muito tenaz (baixa dureza)</li>
+                            <li>Falta de refrigeração correta</li>
+                        </ul>
+                    </div>
+                    <div class="info-block">
+                        <h4>Ações Corretivas Recomendadas</h4>
+                        <ul class="solution-list" id="modal-solutions">
+                            <li><i data-lucide="arrow-down-right"></i> Reduzir a velocidade de corte (Vc)</li>
+                            <li><i data-lucide="shield-alert"></i> Substituir por classe mais dura (CVD resistente a desgaste)</li>
+                            <li><i data-lucide="arrow-up-right"></i> Aumentar avanço (fn) para passar sob a zona endurecida</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+                  
+                  <script src="app.js"></script>
+                  <script>
+function abrirAba(nomeAba) {
+    document.querySelectorAll(".tab-btn").forEach(function(btn) {
+        btn.classList.remove("active");
+    });
+
+    document.querySelectorAll(".tab-content").forEach(function(sec) {
+        sec.classList.remove("active");
+    });
+
+    const botao = document.querySelector('[data-tab="' + nomeAba + '"]');
+    const secao = document.getElementById(nomeAba);
+
+    if (botao) botao.classList.add("active");
+    if (secao) secao.classList.add("active");
+
+    // Recalcular/Atualizar dados da proposta comercial automaticamente se for para a aba orcamentos
+    if (nomeAba === "orcamentos" && typeof window.atualizarVisualizacaoProposta === "function") {
+        window.atualizarVisualizacaoProposta();
+    }
+}
+</script>
+</body>
+</html>
