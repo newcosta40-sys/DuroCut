@@ -1,0 +1,37 @@
+{
+  "tools": [
+    {
+      "id": "cnmg-120404-ff",
+      "name": "CNMG 120404-FF",
+      "type": "insert",
+      "material": "P",
+      "application": "acabamento",
+      "coating": "CVD Ti(C,N) + Al2O3 + TiN",
+      "vc": 220,
+      "feed": 0.12,
+      "ap": 0.5
+    },
+    {
+      "id": "semt-120408-ph",
+      "name": "SEMT 120408-PH",
+      "type": "friso",
+      "material": "P",
+      "application": "faceamento",
+      "coating": "CVD AlTiN",
+      "vc": 180,
+      "feed": 0.18,
+      "ap": 2.5
+    },
+    {
+      "id": "cnmg-120408-sm",
+      "name": "CNMG 120408-SM",
+      "type": "insert",
+      "material": "M",
+      "application": "médio",
+      "coating": "CVD TiCN + Al2O3",
+      "vc": 150,
+      "feed": 0.22,
+      "ap": 2.0
+    }
+  ]
+}
